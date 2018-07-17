@@ -1,0 +1,135 @@
+<style lang="scss">
+@import "../static/css/base.scss";
+@import "../static/css/mixin.scss";
+
+.text-list-wrapper {
+  .text-sublist {
+    line-height: 1;
+    font-size: $font-size-small;
+    color: $text-color-l;
+    border-top: 1rpx solid $border-color-l;
+    overflow: hidden;
+    .text-direction {
+       @include flex-normal;
+    }
+  }
+  .text-direction-left {
+    position: relative;
+    justify-content: space-between;
+    flex-direction: row;
+    margin: 30rpx 41rpx 30rpx 35rpx;
+    box-sizing: border-box;
+    .sublist-word {
+      line-height: 42rpx;
+      font-size: $font-size-medium-x;
+      color: $text-color-l;
+      .sublist-title {
+        max-height: 84rpx;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+    }
+    .sublist-img {
+      margin-left: 41rpx;
+    }
+    .sublist-updatetime {
+      position: absolute;
+      left: 120rpx;
+      bottom: 0;
+    }
+    .sublist-browseNum {
+      @extend .sublist-updatetime;
+      left: 0;
+    }
+  }
+  .text-direction-right {
+    flex-direction: row-reverse;
+    margin: 20rpx 20rpx;
+    .sublist-word {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-height: 40rpx;
+      margin-top: 10rpx;
+      font-size: $font-size-medium;
+      color: $text-color-ll;
+      .sublist-title {
+        margin-bottom: 13rpx;
+        max-height: 80rpx;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+    }
+    .sublist-img {
+      margin-right: 29rpx;
+    }
+  }
+  .sublist-img {
+    width: 270rpx;
+    image {
+      width: 270rpx;
+      height: 152rpx;
+      border-radius: 10rpx;
+    }
+  }
+  .sublist-word {
+    flex: 1;
+  }
+  .sublist-updatetime,
+  .sublist-browseNum {
+    display: flex;
+    align-items: center;
+    font-size: $font-size-small-ss;
+    color: $text-color-lll;
+    image {
+      width: 18rpx;
+      height: 14rpx;
+      margin-right: 5rpx;
+      vertical-align: middle;
+    }
+  }
+}
+</style>
+
+<template>
+  <view class="text-list-wrapper">
+    <view class="text-sublist" wx:for="{{textListData}}" wx:key="{{key}}" data-id="{{item.id}}" data-freestate="{{item.freestate}}" @tap="linkTo">
+      <view class="text-direction text-direction-{{textDirection}}">
+        <view class="sublist-word">
+          <view class="sublist-title">{{item.title}}</view>
+          <view wx:if="{{item.browseNum}}" class="sublist-browseNum"><image src="../static/images/ico_eye.png" alt=""/>{{item.browseNum}}</view>
+          <view class="sublist-updatetime"><image src="../static/images/ico_canled.png" alt=""/>{{item.updatetime}}</view>
+        </view>
+        <view class="sublist-img">
+          <image src="{{item.imgurl}}" alt=""/>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy"
+
+export default class textList extends wepy.component {
+  props = {
+    textListData: {
+      type: Array,
+      default: []
+    },
+    textDirection: {
+      type: String,
+      default: 'left'
+    }
+  }
+  methods = {
+    linkTo(e) {
+      this.$emit('linkFn', e.currentTarget.dataset)
+    }
+  }
+}
+</script>

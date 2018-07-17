@@ -1,0 +1,63 @@
+<style lang="scss">
+@import "../static/css/base.scss";
+  .cover-txt {
+    width: 100%;
+    height: 50rpx;
+    line-height: 50rpx;
+    background-color: rgba(255, 153, 0, .5);
+    color: $text-color-white;
+    font-size: $font-size-small;
+    text-align:center;
+  }
+  .animation {
+    animation: ani .5s linear 10s 1;
+    animation-fill-mode: forwards;
+  }
+  @keyframes ani {
+    0% {
+    transform: translateY(0);
+    }
+    100% {
+    transform: translateY(-100%);
+    }
+  }
+</style>
+
+<template>
+  <view wx:if="{{noFreePlay}}" class="videoContainer">
+    <video id="video" src="{{videoUrl}}" autoplay duration="300" bindtimeupdate="bindtimeupdate">
+      <cover-view wx:if="{{txtWarning}}">
+        <cover-view class="cover-txt {{animation}}">{{txtWarning}}</cover-view>
+      </cover-view>
+    </video>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy"
+export default class video extends wepy.component {
+  props = {
+    videoUrl: {
+      type: String,
+      default: 'null'
+    },
+    txtWarning: {
+      type: String,
+      default: ''
+    },
+    animation: {
+      type: String,
+      default: ''
+    },
+    noFreePlay: {
+      type: Boolean,
+      default: false
+    }
+  }
+  methods = {
+    bindtimeupdate (res) {
+      this.$emit('bindtimeupdate', res)
+    }
+  }
+}
+</script>

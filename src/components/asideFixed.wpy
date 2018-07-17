@@ -1,0 +1,43 @@
+<style lang="scss">
+  .aside-fixed {
+    position: fixed;
+    bottom: 120rpx;
+    right: 0;
+    display: flex;
+    align-items: center;
+    padding: 15rpx;
+    background: rgba(0, 0, 0, .5);
+    border-top-left-radius: 10rpx;
+    border-bottom-left-radius: 10rpx;
+    image {
+      width: 50rpx;
+      height: 50rpx;
+    }
+  }
+</style>
+
+<template>
+  <view wx:if="{{share}}" class="aside-fixed" @tap="goHome">
+    <image src="../static/images/goHome.png"></image>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy"
+export default class asideFixed extends wepy.component {
+  props = {
+    share: {
+      type: Boolean,
+      default: false
+    }
+  }
+  methods = {
+    goHome () {
+      this.$emit('goHome', 100)
+      wx.reLaunch({
+        url: 'index'
+      })
+    }
+  }
+}
+</script>

@@ -1,0 +1,66 @@
+<style lang="scss">
+@import 'static/plugin/wxParse.wxss';
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+import Promise from 'promise-polyfill'
+
+export default class extends wepy.app {
+  constructor () {
+    super()
+    this.use('promisify')
+  }
+	config = {
+		pages: [
+			'pages/index',
+			'pages/consultation',
+			'pages/about',
+      'pages/videoPlay',
+      'pages/consultationDetail',
+      'pages/webview'
+		],
+		window: {
+			backgroundTextStyle: 'light',
+			navigationBarBackgroundColor: '#fff',
+			navigationBarTitleText: 'WeChat',
+			navigationBarTextStyle: 'black',
+      onReachBottomDistance: 50
+		},
+		tabBar: {
+			color: '#999',
+			selectedColor: '#000',
+			backgroundColor: '#fafafa',
+			list: [
+				{
+					pagePath: 'pages/index',
+					text: '最新视频',
+					iconPath: 'static/images/tabbar_video.png',
+					selectedIconPath: 'static/images/tabbar_video_active.png'
+				},
+				{
+					pagePath: 'pages/consultation',
+					text: '最热资讯',
+					iconPath: 'static/images/tabbar_docs.png',
+					selectedIconPath: 'static/images/tabbar_docs_active.png'
+				},
+				{
+					pagePath: 'pages/about',
+					text: '关于我们',
+					iconPath: 'static/images/tabbar_profile.png',
+					selectedIconPath: 'static/images/tabbar_profile_active.png'
+				}
+			]
+		}
+	}
+  globalData = {
+    share: false
+  }
+  onShow (ops) {
+    if (ops.scene == 1007 || ops.scene == 1008 || ops.scene == 1036 || ops.scene == 1044) {
+      this.globalData.share = true
+    }
+  }
+}
+</script>

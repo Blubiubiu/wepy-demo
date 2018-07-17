@@ -1,0 +1,107 @@
+<style lang="scss">
+.title {
+  margin-bottom: 27rpx;
+}
+</style>
+
+<template>
+  <view class="container">
+    <title :name="name" :titleImgUrl="titleImgUrl"></title>
+    <textList :textListData.sync="textListData" @linkFn.user="linkTo" :textDirection="textDirection"></textList>
+    <loadmoreLine :isEmpty.sync="isEmpty" :isLoading.sync="isLoading" :loadmoreTxt="loadmoreTxt" :nomoreTxt="nomoreTxt"></loadmoreLine>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy"
+import title from "../components/title"
+import textList from "../components/text_list"
+import loadmoreLine from "../components/loadmore_line"
+import api from '../static/js/api.js'
+import { wxRequest } from '../static/js/contact.js'
+import { ERR_OK_CODE } from '../static/js/err_code.js'
+
+export default class Consultation extends wepy.page {
+  config = {
+    navigationBarTitleText: "最热资讯"
+  }
+  components = {
+    textList,
+    loadmoreLine,
+    title
+  }
+  data = {
+    name: '最热资讯',
+    titleImgUrl: '../static/images/title_hot.png',
+    textListData: [],
+    _textListData: [],
+    isLoading: true,
+    isEmpty: false,
+    loadmoreTxt: '正在加载',
+    nomoreTxt: '我是有底线的',
+    page: 1,
+    textDirection: 'left'
+  }
+  //清空globaldata
+  _clearGlobalData () {
+    this.$parent.globalData.share = false
+  }
+  //获取资讯列表
+  _getTextListData () {
+    const that = this
+    return wxRequest(api.latestConsultationList, {
+      "page": this.page,
+      "type": '2'
+    }, function(data) {
+      if (data.code === ERR_OK_CODE) {
+        that._textListData = data.resobj.rows
+        that._textListData.forEach((v, i) => {
+          that._textListData[i].title = data.resobj.rows[i].title
+          that._textListData[i].imgurl = data.resobj.rows[i].imgurl
+          that._textListData[i].id = data.resobj.rows[i].id
+          that._textListData[i].updatetime = data.resobj.rows[i].updatetime.substring(0, 10)
+          that._textListData[i].browseNum = data.resobj.rows[i].participationcount
+        })
+        that.textListData = that.textListData.concat(that._textListData)
+        that.$apply()
+      }
+    }).then(() => {
+      if (that._textListData.length < 10) {
+        that.isEmpty = true
+        that.isLoading = false
+      } else {
+        that.isEmpty = false
+        that.isLoading = true
+      }
+    })
+  }
+  methods = {
+    linkTo (e) {
+      wx.navigateTo({
+        url: `consultationDetail?id=` + e.id
+      })
+    }
+  }
+  //上拉加载
+  onReachBottom () {
+    this.page++
+    this._getTextListData()
+  }
+  onLoad () {
+    this._getTextListData()
+    this._clearGlobalData()
+  }
+  onShareAppMessage (res) {
+    return {
+      title: '我在李强365查看最热门的在线教育咨询，一起来看吧！',
+      path: '',
+      success: function(res) {
+        // 转发成功
+      },
+      fail: function(res) {
+        // 转发失败
+      }
+    }
+  }
+}
+</script>

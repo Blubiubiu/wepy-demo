@@ -1,0 +1,41 @@
+@import './base.scss';
+
+@mixin btn($size: $font-size-small, $color: #fff, $bgcolor: $text-color-light, $padding: 10rpx, $radius: 10rpx) {
+  padding: $padding;
+  background-color: $bgcolor;
+  border-radius: $radius;
+  border: 1rpx solid $border-color-l;
+  font-size: $size;
+  color: $color;
+  text-align: center;
+  line-height: 1;
+  display: inline-block;
+}
+
+@mixin flex-normal {
+  display: flex;
+}
+
+@mixin flex-row {
+  display: flex;
+  flex-flow: row wrap;
+  align-content: flex-start;
+  justify-content: space-between;
+}
+
+@mixin flex-col {
+  display: flex;
+  justify-content: center;
+}
+
+@mixin flex-fifty {
+  flex: 0 0 47%;
+}
+
+//border
+@mixin border-1rpx-l {
+  border: 1rpx solid $border-color-l;
+}
+@mixin border-1rpx-ll {
+  border: 1rpx solid $border-color-ll;
+}

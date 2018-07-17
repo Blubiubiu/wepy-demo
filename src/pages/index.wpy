@@ -1,0 +1,150 @@
+<style lang="scss">
+@import "../static/css/base.scss";
+swiper {
+  height: 395rpx;
+}
+.title {
+  margin-top: 31rpx;
+}
+</style>
+
+<template>
+  <view class="container">
+    <swiper :swiperControl="swiperControl" :swiperData.sync="swiperData" @tapFn.user="swiperLinkTo"></swiper>
+    <title :name="name" :titleImgUrl="titleImgUrl"></title>
+    <layoutList :videoList.sync="videoList" @linkFn.user="linkTo">
+      <image class="subtitleImg" slot="subtitleImg" src="{{subtitleImg}}" alt=""></image>
+      <image class="absoImg" slot="absoImg" src="{{absoImg}}" alt=""></image>
+    </layoutList>
+    <loadmoreLine :isEmpty.sync="isEmpty" :isLoading.sync="isLoading" :loadmoreTxt="loadmoreTxt" :nomoreTxt="nomoreTxt"></loadmoreLine>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy"
+import title from "../components/title"
+import layoutList from "../components/layout_list"
+import loadmoreLine from "../components/loadmore_line"
+import swiper from "../components/swiper"
+import api from '../static/js/api.js'
+import { getParam } from '../static/js/util'
+import { wxRequest } from '../static/js/contact.js'
+import { ERR_OK_CODE } from '../static/js/err_code.js'
+import tip from '../static/js/tip.js'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: "最新视频"
+  }
+  components = {
+    layoutList,
+    loadmoreLine,
+    swiper,
+    title
+  }
+  data = {
+    name: '最新视频',
+    titleImgUrl: '../static/images/title_new.png',
+    subtitleImg: '../static/images/ico_canled.png',
+    absoImg: '../static/images/ico_clock.png',
+    videoList: [],
+    _videoList: [],
+    isLoading: false,
+    isEmpty: false,
+    loadmoreTxt: '正在加载',
+    nomoreTxt: '我是有底线的',
+    page: 1,
+    swiperControl: {
+      indicatorDots: true,
+      indicatorColor: 'rgba(255, 255, 255, .3)',
+      indicatorActiveColor: '#f90',
+      autoplay: true,
+      interval: 3000,
+      duration: 1000,
+      circular: true
+    },
+    swiperData: []
+  }
+  //获取轮播图
+  _getSwiperData () {
+    const that = this;
+    return wxRequest(api.indexSwiper, {type: '1'}, function(data) {
+      if (data.code === ERR_OK_CODE) {
+        data.resobj.forEach((v, i) => {
+          if (data.resobj[i].type === '1') {
+            that.swiperData = that.swiperData.concat(data.resobj[i])
+          }
+        })
+        that.swiperData.forEach((v, i) => {
+          that.swiperData[i].imgurl = that.swiperData[i].appimgurl
+          that.swiperData[i].id = getParam(that.swiperData[i].applinkurl, 'zjid')
+        })
+        that.$apply()
+      }
+    })
+  }
+  //获取视频列表
+  _getLatestVideoList () {
+    const that = this;
+    return wxRequest(api.latestVideoList, {
+      'courseid': '',
+      'page': this.page,
+      'type': 3
+    }, function(data) {
+      if (data.code === ERR_OK_CODE) {
+        that._videoList = data.resobj.rows;
+        that._videoList.forEach((v, i) => {
+          that._videoList[i].imgurl = data.resobj.rows[i].appimgurl
+          that._videoList[i].title = data.resobj.rows[i].name
+          that._videoList[i].id = data.resobj.rows[i].id
+          that._videoList[i].time = data.resobj.rows[i].createtime.substring(0,10)
+          that._videoList[i].duration = data.resobj.rows[i].duration || '00:00'
+          that._videoList[i].freestate = data.resobj.rows[i].freestate
+        })
+        that.videoList = that.videoList.concat(that._videoList)
+        that.$apply()
+      }
+    }).then(() => {
+      if (that._videoList.length < 10) {
+        that.isEmpty = true
+      } else {
+        that.isEmpty = false
+      }
+    })
+  }
+  //清空globaldata
+  _clearGlobalData () {
+    this.$parent.globalData.share = false
+  }
+  methods = {
+    linkTo (e) {
+      wx.navigateTo({
+        url: `videoPlay?id=` + e.id
+      })
+    },
+    swiperLinkTo (e) {
+      wx.navigateTo({
+        url: `videoPlay?id=` + e.id
+      })
+    }
+  }
+  //上拉加载
+  onReachBottom () {
+    this.page++;
+    this.isLoading = true;
+    this._getLatestVideoList().then(() => {
+      this.isLoading = false;
+    })
+  }
+  onLoad (ops) {
+    this._getSwiperData()
+    this._getLatestVideoList()
+    this._clearGlobalData()
+  }
+  onShareAppMessage () {
+    return {
+      title: '我在李强365查看最新的在线教育视频，一起来看吧！'
+    }
+  }
+}
+</script>

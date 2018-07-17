@@ -1,0 +1,27 @@
+<style lang="scss">
+  map {
+    width: 100%;
+    height: 400rpx;
+  }
+</style>
+
+<template>
+  <view>
+    <map id="map" longitude="{{mapOptions.longitude}}" latitude="{{mapOptions.latitude}}" scale="{{mapOptions.scale}}" markers="{{mapOptions.markers}}"></map>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy"
+export default class map extends wepy.component {
+  props = {
+    mapOptions: {
+      type: Object,
+      default: 'null'
+    }
+  }
+  data = {
+
+  }
+}
+</script>

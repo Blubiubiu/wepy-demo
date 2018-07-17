@@ -1,0 +1,39 @@
+<style lang="scss">
+@import "../static/css/base.scss";
+@import "../static/css/mixin.scss";
+.title {
+  @include flex-normal;
+  align-items: center;
+  margin: 0 20rpx;
+  font-size: $font-size-medium-x;
+  color: $text-color-l;
+  image {
+    width: 30rpx;
+    height: 30rpx;
+    margin-right: 11rpx;
+  }
+}
+</style>
+
+<template>
+  <view class="title">
+    <image wx:if="{{titleImgUrl}}" src="{{titleImgUrl}}" alt=""/>{{name}}
+  </view>
+</template>
+
+<script>
+import wepy from "wepy";
+export default class title extends wepy.component {
+  props = {
+    name: {
+      type: String,
+      default: 'null'
+    },
+    titleImgUrl: {
+      type: String,
+      default: 'null'
+    }
+  }
+}
+
+</script>

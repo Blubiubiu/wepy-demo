@@ -1,0 +1,39 @@
+<style type="scss">
+  image {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<template>
+  <swiper indicator-dots="{{swiperControl.indicatorDots}}" circular="{{swiperControl.circular}}" indicator-color="{{swiperControl.indicatorColor}}" indicator-active-color="{{swiperControl.indicatorActiveColor}}"
+    autoplay="{{swiperControl.autoplay}}" interval="{{swiperControl.interval}}" duration="{{swiperControl.duration}}">
+    <block wx:for="{{swiperData}}" wx:key="key">
+      <swiper-item @tap="swiperLinkTo" data-id="{{item.id}}">
+        <image src="{{item.imgurl}}" class="slide-image"/>
+      </swiper-item>
+    </block>
+  </swiper>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Swiper extends wepy.component {
+    props = {
+      swiperData: {
+        type: Array,
+        default: 'null'
+      },
+      swiperControl: {
+        type: Object,
+        default: 'null'
+      }
+    }
+    methods = {
+      swiperLinkTo(e) {
+        this.$emit('tapFn', e.currentTarget.dataset)
+      }
+    }
+  }
+</script>

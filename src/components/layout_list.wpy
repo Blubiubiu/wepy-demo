@@ -1,0 +1,102 @@
+<style lang="scss">
+@import "../static/css/base.scss";
+@import "../static/css/mixin.scss";
+.weui-flex {
+  @include flex-row;
+  margin: 0 10rpx;
+  .weui-flex__item {
+    position: relative;
+    @include flex-fifty;
+    line-height: 1;
+    margin: 0 10rpx;
+    margin-top: 34rpx;
+    box-sizing: border-box;
+    font-size: $font-size-small-ss;
+    color: $text-color-lll;
+    overflow: hidden;
+    image {
+      display: block;
+      width: 100%;
+      height: 193rpx;
+      border-radius: $border-radius;
+    }
+    .placeholder {
+      margin: 18rpx 0;
+      font-size: $font-size-medium;
+      color: $text-color-ll;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      word-wrap:break-word;
+      overflow: hidden;
+    }
+    .subtitleImg {
+      width: 18rpx;
+      height: 14rpx;
+      margin-right: 16rpx;
+      border-radius: 0;
+    }
+    .subtitle {
+      @include flex-normal;
+      align-items: center;
+    }
+    .abso {
+      @include flex-normal;
+      align-items: center;
+      position: absolute;
+      top: 146rpx;
+      right: 12rpx;
+      width: 90rpx;
+      height: 30rpx;
+      background: rgba(0, 0, 0, .5);
+      border-radius: 30rpx;
+      font-size: $font-size-small-ss;
+      color: $text-color-light;
+      .absoImg {
+        width: 15rpx;
+        height: 15rpx;
+        margin-left: 13rpx;
+        margin-right: 8rpx;
+      }
+    }
+  }
+}
+</style>
+
+<template>
+  <view class="layout-list-wrapper">
+    <view>
+      <view class="weui-flex">
+        <view class="weui-flex__item" wx:for="{{videoList}}" wx:key="key" data-id="{{item.id}}" data-freestate="{{item.freestate}}" @tap="linkTo">
+          <image src="{{item.imgurl}}" alt=""/>
+          <view class="placeholder">{{item.title}}</view>
+          <view class="subtitle">
+            <slot name="subtitleImg"></slot>
+            <text wx:if="{{item.time}}">更新于{{item.time}}</text>
+          </view>
+          <view wx:if="{{item.duration}}" class="abso">
+            <slot name="absoImg"></slot>
+            <text>{{item.duration}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy";
+export default class layoutList extends wepy.component {
+  props = {
+    videoList: {
+      type: Array,
+      default: []
+    }
+  }
+  methods = {
+    linkTo(e) {
+      this.$emit('linkFn', e.currentTarget.dataset)
+    }
+  }
+}
+
+</script>

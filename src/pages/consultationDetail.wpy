@@ -1,0 +1,107 @@
+<style lang="scss">
+@import "../static/css/base.scss";
+
+.container {
+  font-size: $font-size-medium;
+}
+.titleImg {
+  width: 100%;
+  height: 375rpx;
+}
+.wxParse-img {
+    margin: 0 auto;
+    width: 100%;
+    min-height: 200rpx;
+    display: block;
+    background-color: transparent;
+}
+.content {
+  padding: 0 20rpx;
+}
+</style>
+
+<template>
+  <view class="container">
+    <block wx:if="{{titleImg}}">
+      <image class="titleImg" src="{{titleImg}}" alt=""/>
+    </block>
+    <view class="content">
+      <html2wxml :parserName="name" :parserContent.sync="textContent"></html2wxml>
+    </view>
+    <asideFixed :share.sync="share" @goHome.user="goHome"></asideFixed>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy"
+import api from '../static/js/api.js'
+import asideFixed from "../components/asideFixed"
+import { wxRequest } from '../static/js/contact.js'
+import { ERR_OK_CODE } from '../static/js/err_code.js'
+import html2wxml from '../components/html2wxml'
+import tip from '../static/js/tip'
+
+export default class ConsultationDetail extends wepy.page {
+  config = {
+    navigationBarTitleText: "资讯详情"
+  }
+  components = {
+    html2wxml,
+    asideFixed
+  }
+  data = {
+    name: 'myHtmlParserKiner',
+    title: '',
+    titleImg: '',
+    textId: '',
+    textContent: '',
+    share: false
+  }
+  _textDetail () {
+    const that = this
+    wxRequest(api.textDetail, {
+      "id": this.textId
+    }, function(data) {
+      if (data.code === ERR_OK_CODE) {
+        that.title = data.resobj.title
+        that.titleImg = data.resobj.imgurl3
+        that.textContent = data.resobj.content
+        that.$apply()
+      }
+    }).then(() => {
+      //调用通知接口通知组件更新数据
+      this.$invoke('html2wxml', 'htmlParserNotice')
+      wx.setNavigationBarTitle({
+        title: this.title
+      })
+    })
+  }
+  methods = {
+    goHome () {
+      this.$parent.globalData.share = false
+    }
+  }
+  onLoad (option) {
+    this.textId = option.id
+    if (this.$parent.globalData.share) {
+      this.share = true
+    }
+  }
+  onShow () {
+    tip.loading()
+    this._textDetail()
+  }
+  onShareAppMessage (res) {
+    return {
+      title: '互联网教育最热门的咨询在这里，马上查看！',
+      path: '',
+      success: function(res) {
+        // 转发成功
+      },
+      fail: function(res) {
+        // 转发失败
+      }
+    }
+  }
+}
+</script>

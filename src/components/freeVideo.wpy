@@ -1,0 +1,25 @@
+<style lang="scss">
+
+</style>
+
+<template>
+  <view wx:if="{{freePlay}}" class="videoContainer">
+    <video id="video" src="{{videoUrl}}" autoplay></video>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy"
+export default class freeVideo extends wepy.component {
+  props = {
+    videoUrl: {
+      type: String,
+      default: 'null'
+    },
+    freePlay: {
+      type: Boolean,
+      default: false
+    }
+  }
+}
+</script>

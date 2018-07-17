@@ -1,0 +1,135 @@
+<style lang="scss">
+@import "../static/css/base.scss";
+$padding:35rpx;
+.contents{
+	font-size:$font-size-small;
+	padding-left:$padding;
+	padding-right:$padding;
+	color:$text-color-l;
+}
+.title{
+	margin-bottom:28rpx;
+}
+.company{
+	color:$text-color-l;
+	font-size:$font-size-medium-x;
+	padding-left:66rpx;
+	padding-right:66rpx;
+}
+.address {
+  display: flex;
+}
+.address-txt {
+  word-break: keep-all;
+}
+.text{
+	margin-bottom: $padding;
+  font-size: $font-size-small;
+}
+.companyPhone{
+	margin-bottom:$padding;
+  font-size: $font-size-small;
+}
+.clearfix {
+  overflow: hidden;
+}
+.companyName{
+	margin-top:52rpx;
+	margin-bottom:39rpx;
+}
+.topImag{
+	width:100%
+}
+</style>
+
+<template>
+	<image class="topImag" src="../static/images/about_bg.png"></image>
+	<view  class="contents">
+		<html2wxml  :parserContent.sync="textContent"></html2wxml>
+	</view>
+	<Title :titleImgUrl.sync="titleImgUrl" :name.sync="name"></Title>
+  <view class="container">
+    <Map :mapOptions="mapOptions"></Map>
+  </view>
+  <view class="company">
+  <view class="companyName">北京博睿思远网络科技有限公司</view>
+  <view class="companyDetails clearfix">
+  	<view class="address">
+      <view class="text address-txt">地址：</view>
+  	  <view class="text">北京市昌平区平西府西二路TBD云集中心3号楼B座6层</view>
+    </view>
+  	<view class="companyPhone">电话：400-9009-365</view>
+  </view>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy"
+import Map from "../components/map"
+import html2wxml from '../components/html2wxml'
+import Title from "../components/title"
+import api from '../static/js/api.js'
+import { wxRequest } from '../static/js/contact.js'
+import { ERR_OK_CODE } from '../static/js/err_code.js'
+
+export default class About extends wepy.page {
+  config = {
+    navigationBarTitleText: "关于我们"
+  }
+  components = {
+    Map,
+    html2wxml,
+    Title
+  }
+  data = {
+    textContent:'',
+    mapOptions: {
+      longitude: '116.3660000000',
+      latitude: '40.0991500000',
+      scale: 16,
+      markers: [{
+        iconPath: "../static/images/location.png",
+        id: 0,
+        latitude: 40.0991500000,
+        longitude: 116.3660000000,
+        width: 20,
+        height: 20
+      }]
+    },
+    name:'联系我们',
+    titleImgUrl:'../static/images/ico_contact.png',
+  }
+  //清空globaldata
+  _clearGlobalData () {
+    this.$parent.globalData.share = false
+  }
+  _getAboutData () {
+    const that = this;
+    wxRequest(api.aboutUs, null, function(data) {
+      if (data.code === ERR_OK_CODE) {
+        that.textContent = data.resobj.content
+        that.$apply()
+      }
+    }).then(() => {
+      //调用通知接口通知组件更新数据
+      this.$invoke('html2wxml', 'htmlParserNotice')
+    })
+  }
+  onReady () {
+    this._getAboutData()
+    this._clearGlobalData()
+  }
+  onShareAppMessage (res) {
+    return {
+      title: '李强365，人生更精彩！了解更多请点击查看...',
+      path: '',
+      success: function(res) {
+        // 转发成功
+      },
+      fail: function(res) {
+        // 转发失败
+      }
+    }
+  }
+}
+</script>

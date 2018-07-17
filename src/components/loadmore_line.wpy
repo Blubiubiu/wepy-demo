@@ -1,0 +1,62 @@
+<style lang="scss">
+@import "../static/css/base.scss";
+@import "../static/css/mixin.scss";
+.loadmore {
+  width: 65%;
+  margin: 1.5em auto;
+  line-height: 1.6em;
+  font-size: $font-size-small;
+  text-align: center;
+  color: $text-color-lll;
+
+  .loadmore-tips {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    top: -0.9em;
+    padding: 0 .55em;
+    background-color: #FFFFFF;
+    color: #999999;
+  }
+}
+.loadmore-line {
+  border-top: 1rpx solid $border-color-l;
+}
+</style>
+
+<template>
+  <view>
+    <view wx:if="{{isLoading}}" class="loadmore">
+      <view class="loading"></view>
+      <view class="loadmore-tips">{{loadmoreTxt}}</view>
+    </view>
+    <view wx:if="{{isEmpty}}" class="loadmore loadmore-line">
+      <view class="loadmore-tips">{{nomoreTxt}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy";
+export default class loadmoreLine extends wepy.component {
+  props = {
+    isEmpty: {
+      type: Boolean,
+      default: false
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
+    },
+    loadmoreTxt: {
+      type: String,
+      default: 'null'
+    },
+    nomoreTxt: {
+      type: String,
+      default: 'null'
+    }
+  }
+}
+
+</script>
